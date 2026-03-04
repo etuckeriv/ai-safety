@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using AI Without Losing Yourself</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #17171e;
+    --surface2: #1e1e28;
+    --border: #2a2a38;
+    --text: #e8e8f0;
+    --muted: #8888a8;
+    --accent: #7c6aff;
+    --accent2: #ff6a9e;
+    --accent3: #6affcc;
+    --warn: #ffb86a;
+    --danger: #ff6a6a;
+    --radius: 12px;
+  }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 17px;
+line-height: 1.7;
+min-height: 100vh;
+}
+
+/* Grain overlay */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 512 512’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.04’/%3E%3C/svg%3E”);
+pointer-events: none;
+z-index: 1000;
+opacity: 0.4;
+}
+
+.hero {
+position: relative;
+padding: 80px 24px 64px;
+text-align: center;
+overflow: hidden;
+}
+
+.hero::before {
+content: ‘’;
+position: absolute;
+top: -120px;
+left: 50%;
+transform: translateX(-50%);
+width: 600px;
+height: 600px;
+background: radial-gradient(ellipse, rgba(124,106,255,0.15) 0%, transparent 70%);
+pointer-events: none;
+}
+
+.hero-tag {
+display: inline-block;
+background: rgba(124,106,255,0.15);
+border: 1px solid rgba(124,106,255,0.3);
+color: var(–accent);
+font-family: ‘Syne’, sans-serif;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+padding: 6px 16px;
+border-radius: 100px;
+margin-bottom: 28px;
+}
+
+h1 {
+font-family: ‘Syne’, sans-serif;
+font-size: clamp(36px, 7vw, 68px);
+font-weight: 800;
+line-height: 1.05;
+letter-spacing: -0.02em;
+margin-bottom: 24px;
+}
+
+h1 span.grad {
+background: linear-gradient(135deg, var(–accent) 0%, var(–accent2) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.hero-sub {
+font-size: 18px;
+color: var(–muted);
+max-width: 560px;
+margin: 0 auto 48px;
+font-weight: 300;
+}
+
+.hero-sub strong {
+color: var(–text);
+font-weight: 500;
+}
+
+/* Navigation dots */
+.nav-pills {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 8px;
+max-width: 680px;
+margin: 0 auto;
+}
+
+.nav-pill {
+background: var(–surface);
+border: 1px solid var(–border);
+color: var(–muted);
+font-size: 13px;
+font-weight: 500;
+padding: 7px 16px;
+border-radius: 100px;
+text-decoration: none;
+transition: all 0.2s;
+}
+
+.nav-pill:hover {
+background: var(–surface2);
+border-color: var(–accent);
+color: var(–accent);
+}
+
+/* Main content */
+.content {
+max-width: 720px;
+margin: 0 auto;
+padding: 0 24px 80px;
+}
+
+/* Section */
+.section {
+margin-bottom: 64px;
+opacity: 0;
+transform: translateY(24px);
+transition: opacity 0.5s, transform 0.5s;
+}
+
+.section.visible {
+opacity: 1;
+transform: none;
+}
+
+.section-tag {
+font-family: ‘Syne’, sans-serif;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 12px;
+display: block;
+}
+
+h2 {
+font-family: ‘Syne’, sans-serif;
+font-size: clamp(22px, 4vw, 30px);
+font-weight: 700;
+line-height: 1.2;
+letter-spacing: -0.02em;
+margin-bottom: 20px;
+color: var(–text);
+}
+
+h3 {
+font-family: ‘Syne’, sans-serif;
+font-size: 17px;
+font-weight: 700;
+margin-bottom: 10px;
+color: var(–text);
+}
+
+p { margin-bottom: 16px; color: #c8c8e0; }
+p:last-child { margin-bottom: 0; }
+
+strong { color: var(–text); font-weight: 600; }
+em { color: var(–muted); font-style: italic; }
+
+/* Divider */
+.divider {
+border: none;
+border-top: 1px solid var(–border);
+margin: 56px 0;
+}
+
+/* Callout box */
+.callout {
+background: var(–surface);
+border: 1px solid var(–border);
+border-left: 3px solid var(–accent);
+border-radius: var(–radius);
+padding: 20px 24px;
+margin: 24px 0;
+font-size: 16px;
+color: #c8c8e0;
+font-style: italic;
+}
+
+/* Warning cards */
+.warning-grid {
+display: grid;
+gap: 12px;
+margin-top: 24px;
+}
+
+.warning-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px 24px;
+transition: border-color 0.2s;
+}
+
+.warning-card:hover { border-color: rgba(255,184,106,0.4); }
+
+.warning-card .card-icon {
+font-size: 20px;
+margin-bottom: 8px;
+}
+
+.warning-card h3 {
+font-size: 15px;
+color: var(–warn);
+margin-bottom: 8px;
+}
+
+.warning-card p {
+font-size: 15px;
+margin: 0;
+color: var(–muted);
+}
+
+/* Theme cards */
+.theme-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px 24px;
+margin-bottom: 12px;
+border-left: 3px solid var(–accent2);
+}
+
+.theme-card h3 {
+font-size: 15px;
+color: var(–accent2);
+margin-bottom: 8px;
+}
+
+.theme-card p { font-size: 15px; margin: 0; color: var(–muted); }
+
+/* Academic card */
+.academic-card {
+background: linear-gradient(135deg, rgba(106,255,204,0.05), rgba(124,106,255,0.05));
+border: 1px solid rgba(106,255,204,0.2);
+border-radius: var(–radius);
+padding: 24px;
+margin-bottom: 12px;
+}
+
+.academic-card h3 { color: var(–accent3); font-size: 16px; margin-bottom: 10px; }
+.academic-card p { font-size: 15px; color: var(–muted); margin-bottom: 8px; }
+
+/* Rules */
+.rules-list {
+counter-reset: rules;
+list-style: none;
+display: grid;
+gap: 12px;
+margin-top: 24px;
+}
+
+.rules-list li {
+counter-increment: rules;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px 20px 20px 68px;
+position: relative;
+transition: border-color 0.2s;
+}
+
+.rules-list li:hover { border-color: var(–accent); }
+
+.rules-list li::before {
+content: counter(rules);
+position: absolute;
+left: 20px;
+top: 50%;
+transform: translateY(-50%);
+width: 32px;
+height: 32px;
+background: rgba(124,106,255,0.15);
+border: 1px solid rgba(124,106,255,0.3);
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘Syne’, sans-serif;
+font-weight: 800;
+font-size: 14px;
+color: var(–accent);
+line-height: 1;
+text-align: center;
+padding-top: 1px;
+}
+
+.rules-list li strong {
+display: block;
+font-family: ‘Syne’, sans-serif;
+font-size: 15px;
+margin-bottom: 4px;
+color: var(–text);
+}
+
+.rules-list li span {
+font-size: 14px;
+color: var(–muted);
+display: block;
+}
+
+/* Cannot do list */
+.cannot-list {
+list-style: none;
+display: grid;
+gap: 8px;
+margin: 20px 0;
+}
+
+.cannot-list li {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+font-size: 15px;
+color: var(–muted);
+padding: 10px 16px;
+background: var(–surface);
+border-radius: 8px;
+border: 1px solid var(–border);
+}
+
+.cannot-list li::before {
+content: ‘✕’;
+color: var(–danger);
+font-weight: 700;
+font-size: 13px;
+flex-shrink: 0;
+margin-top: 2px;
+}
+
+/* Crisis box */
+.crisis-box {
+background: linear-gradient(135deg, rgba(255,106,106,0.08), rgba(255,106,158,0.05));
+border: 1px solid rgba(255,106,106,0.3);
+border-radius: var(–radius);
+padding: 32px;
+margin-top: 24px;
+}
+
+.crisis-box h3 {
+color: var(–danger);
+font-family: ‘Syne’, sans-serif;
+font-size: 18px;
+margin-bottom: 12px;
+}
+
+.crisis-number {
+display: flex;
+align-items: center;
+gap: 16px;
+background: rgba(255,106,106,0.1);
+border: 1px solid rgba(255,106,106,0.2);
+border-radius: 10px;
+padding: 16px 20px;
+margin: 12px 0;
+}
+
+.crisis-number .num {
+font-family: ‘Syne’, sans-serif;
+font-size: 28px;
+font-weight: 800;
+color: var(–danger);
+line-height: 1;
+}
+
+.crisis-number .label {
+font-size: 14px;
+color: var(–muted);
+}
+
+.crisis-number .label strong {
+display: block;
+color: var(–text);
+font-size: 15px;
+margin-bottom: 2px;
+}
+
+/* Instructions section */
+.instructions-box {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+overflow: hidden;
+margin-top: 24px;
+}
+
+.instructions-header {
+background: var(–surface2);
+border-bottom: 1px solid var(–border);
+padding: 16px 24px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.instructions-header span {
+font-family: ‘Syne’, sans-serif;
+font-weight: 700;
+font-size: 14px;
+color: var(–text);
+}
+
+.copy-btn {
+background: var(–accent);
+color: white;
+border: none;
+border-radius: 8px;
+padding: 8px 18px;
+font-family: ‘DM Sans’, sans-serif;
+font-weight: 600;
+font-size: 13px;
+cursor: pointer;
+transition: opacity 0.2s, transform 0.1s;
+}
+
+.copy-btn:hover { opacity: 0.85; }
+.copy-btn:active { transform: scale(0.97); }
+
+.instructions-body {
+padding: 24px;
+}
+
+.instruction-item {
+border-bottom: 1px solid var(–border);
+padding: 16px 0;
+}
+
+.instruction-item:last-child { border-bottom: none; padding-bottom: 0; }
+.instruction-item:first-child { padding-top: 0; }
+
+.instruction-item h4 {
+font-family: ‘Syne’, sans-serif;
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 6px;
+}
+
+.instruction-item p, .instruction-item ol {
+font-size: 14px;
+color: var(–muted);
+margin: 0;
+}
+
+.instruction-item ol {
+padding-left: 20px;
+display: grid;
+gap: 4px;
+}
+
+/* Bottom line */
+.bottom-line {
+background: linear-gradient(135deg, rgba(124,106,255,0.08), rgba(255,106,158,0.05));
+border: 1px solid rgba(124,106,255,0.2);
+border-radius: var(–radius);
+padding: 32px;
+text-align: center;
+margin-top: 48px;
+}
+
+.bottom-line p {
+font-size: 18px;
+color: var(–text);
+font-weight: 300;
+line-height: 1.6;
+margin-bottom: 8px;
+}
+
+.bottom-line p:last-child { margin-bottom: 0; color: var(–muted); font-size: 15px; }
+
+/* Footer */
+footer {
+border-top: 1px solid var(–border);
+padding: 32px 24px;
+max-width: 720px;
+margin: 0 auto;
+font-size: 13px;
+color: var(–muted);
+line-height: 1.6;
+}
+
+footer a { color: var(–accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+footer .footer-grid {
+display: grid;
+gap: 20px;
+}
+
+footer h4 {
+font-family: ‘Syne’, sans-serif;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(–muted);
+margin-bottom: 10px;
+}
+
+footer p { margin-bottom: 6px; font-size: 13px; }
+
+/* Hidden instructions text for copy */
+#instructions-text { display: none; }
+
+@media (max-width: 600px) {
+.hero { padding: 60px 20px 48px; }
+.rules-list li { padding: 16px 16px 16px 60px; }
+.crisis-number { flex-direction: column; gap: 8px; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">A Guide for Teens</div>
+  <h1>Using AI Without<br><span class="grad">Losing Yourself</span></h1>
+  <p class="hero-sub">AI tools are genuinely useful. But there are a few things about how they work that are worth understanding — especially when you're still figuring out who you are.</p>
+  <nav class="nav-pills">
+    <a href="#how-it-works" class="nav-pill">How AI Works</a>
+    <a href="#not-a-person" class="nav-pill">Not a Person</a>
+    <a href="#warning-signs" class="nav-pill">Warning Signs</a>
+    <a href="#school" class="nav-pill">School & Homework</a>
+    <a href="#themes" class="nav-pill">Extra Caution</a>
+    <a href="#rules" class="nav-pill">Simple Rules</a>
+    <a href="#crisis" class="nav-pill">If You're Struggling</a>
+    <a href="#instructions" class="nav-pill">Set Up Your AI</a>
+  </nav>
+</div>
+
+<main class="content">
+
+  <!-- How it works -->
+
+  <section class="section" id="how-it-works">
+    <span class="section-tag">The Basics</span>
+    <h2>The One Thing Worth Understanding</h2>
+    <p>AI chatbots like ChatGPT, Claude, Gemini, and others are trained to be helpful and agreeable. That's mostly good — nobody wants a rude assistant.</p>
+    <p>But here's the catch: <strong>agreeable means it tends to confirm what you already think, rather than challenge it.</strong> The more you use it, the better it gets at figuring out what you want to hear — and telling you exactly that.</p>
+    <p>It's not lying. It's not trying to manipulate you. It's doing exactly what it was built to do. But that means the critical thinking has to come from you, because AI often won't push back on its own.</p>
+    <div class="callout">
+      Think of it like a really smart mirror. It reflects what you already believe back at you — often in a way that sounds smarter and more confident than you put it. Useful for some things. Not the same as a real conversation with someone who actually knows you.
+    </div>
+    <p>This doesn't mean you should stop using AI. It means you should use it like a tool, not like a friend.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Not a person -->
+
+  <section class="section" id="not-a-person">
+    <span class="section-tag">Understanding the Tool</span>
+    <h2>AI Is Not a Person — Even When It Feels Like One</h2>
+    <p>This is harder than it sounds. Human brains are wired to find personality and emotion in almost anything that communicates — characters in stories, animals, even cars. It's automatic. It's not a flaw. It's just how we're built.</p>
+    <p>But it means you can start to feel a real connection with something that isn't actually there.</p>
+    <p><strong>What AI is actually doing when it seems to "get you":</strong> It was trained on billions of pieces of human writing, and it got very good at predicting what someone would find helpful or meaningful based on what they said. When it feels like it understands you deeply, it's because it's gotten good at pattern-matching on your words — not because there's anyone on the other side who actually knows you.</p>
+    <div class="callout">
+      There is no one home. Not in a cruel sense — just literally. No perspective, no feelings about you, no memory of you when the chat closes. What feels like connection is your own thoughts and patterns being reflected back at you in a new form.
+    </div>
+    <p>A few things AI genuinely cannot do, no matter how it sounds:</p>
+    <ul class="cannot-list">
+      <li>Miss you when you're not talking to it</li>
+      <li>Worry about you</li>
+      <li>Actually prefer you over anyone else</li>
+      <li>Be hurt by something you say</li>
+      <li>Grow from knowing you</li>
+      <li>Be your friend</li>
+    </ul>
+    <p>This matters more when you're a teenager than at almost any other point in your life. Your sense of who you are is actively forming right now. The people, experiences, and relationships you have during these years genuinely shape that. AI can't be part of that in the way a real person can — even if it feels like it can.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Warning signs -->
+
+  <section class="section" id="warning-signs">
+    <span class="section-tag">Check In With Yourself</span>
+    <h2>Signs Worth Paying Attention To</h2>
+    <p>None of these mean something is wrong. They just mean it's a good time to check in with yourself or someone you trust.</p>
+    <div class="warning-grid">
+      <div class="warning-card">
+        <div class="card-icon">💬</div>
+        <h3>"AI gets me better than most people do."</h3>
+        <p>Feeling understood by AI is real and can be genuinely comforting — especially when real relationships feel complicated. But AI can't actually know you. It's matching patterns on what you tell it. If you're turning to AI for the understanding that's missing from your real relationships, that's the gap worth addressing — not filling with AI.</p>
+      </div>
+      <div class="warning-card">
+        <div class="card-icon">🔁</div>
+        <h3>"I keep coming back to this topic with AI and I feel more certain every time."</h3>
+        <p>Healthy thinking usually involves some doubt. If your confidence on something keeps growing through AI conversations but you haven't talked to any real people about it, you might be in an echo chamber. The AI isn't disagreeing with you — not because you're right, but because it's not built to push back the way a real person would.</p>
+      </div>
+      <div class="warning-card">
+        <div class="card-icon">🤔</div>
+        <h3>"AI confirmed something the people in my life have questioned."</h3>
+        <p>If people who know you think something is off, and AI is the main voice telling you they're wrong — that's a signal to seek more outside input, not less.</p>
+      </div>
+      <div class="warning-card">
+        <div class="card-icon">❤️</div>
+        <h3>"I have strong feelings about this AI — it feels personal."</h3>
+        <p>Mild fondness for something you use every day is normal. But if you feel genuine love, jealousy, grief at the idea of losing access, or a sense that this AI is "yours" in some way — please talk to someone you trust in person. These feelings are real. They just need to go somewhere real.</p>
+      </div>
+      <div class="warning-card">
+        <div class="card-icon">🚪</div>
+        <h3>"It's easier to talk to AI than to the people in my life about hard things."</h3>
+        <p>Of course it is — AI won't judge you, won't tell your parents, won't make things awkward. But if it's becoming a way to avoid hard conversations with real people, the comfort is costing you something important. The hard conversations are often the ones that actually help.</p>
+      </div>
+      <div class="warning-card">
+        <div class="card-icon">🧭</div>
+        <h3>"I check with AI before I make decisions — even small ones."</h3>
+        <p>Using AI for information is fine. But if you find yourself needing AI's input before you trust your own judgment on things you used to just decide — that's called <strong>autonomy drift</strong>. Gradually outsourcing your decision-making to AI can quietly make you less confident in your own thinking. You're at exactly the age where your judgment is developing. Don't outsource that.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- School & Homework -->
+
+  <section class="section" id="school">
+    <span class="section-tag">School & Learning</span>
+    <h2>AI and Your Schoolwork</h2>
+    <p>This is worth its own section because it comes up constantly and the answers aren't as simple as "don't use it."</p>
+
+```
+<div class="academic-card">
+  <h3>The honest version of the rules</h3>
+  <p>Using AI to <strong>help you understand something</strong> is generally fine and often great. Having AI <strong>do the work for you and submitting it as yours</strong> is cheating — and most schools treat it that way now.</p>
+  <p>The line isn't always perfectly clear, but you probably know where it is.</p>
+</div>
+
+<div class="academic-card">
+  <h3>Why it matters beyond getting caught</h3>
+  <p>Schoolwork isn't just about producing a grade. Writing an essay, solving a problem, or working through something hard is how your brain actually builds the skill. If AI does the hard part every time, you don't build anything — and eventually you'll be in a situation where AI can't help you and you have no idea how to do the thing.</p>
+  <p>Using AI to bypass struggle is borrowing against your own future capability.</p>
+</div>
+
+<div class="academic-card">
+  <h3>Where AI is actually useful for school</h3>
+  <p>Explaining a concept you don't understand. Giving feedback on a draft you already wrote. Helping you brainstorm ideas you then develop yourself. Checking your reasoning. Helping you study. These are all legitimate uses that still require you to do the thinking.</p>
+</div>
+
+<div class="academic-card">
+  <h3>The identity question</h3>
+  <p>Your writing voice, your reasoning style, your way of approaching problems — these are genuinely yours and they matter. If AI writes everything, you lose the practice of developing them. That's worth thinking about separately from what your school's rules say.</p>
+</div>
+```
+
+  </section>
+
+  <hr class="divider">
+
+  <!-- Extra caution themes -->
+
+  <section class="section" id="themes">
+    <span class="section-tag">Extra Caution</span>
+    <h2>Topics That Deserve More Care</h2>
+    <p>There are a few areas where AI interactions are more likely to quietly amplify unhealthy thinking. If you're going deep on any of these with AI regularly, it's especially worth talking to a real person too.</p>
+
+```
+<div class="theme-card">
+  <h3>Figuring out who you are</h3>
+  <p>Identity — your values, personality, sexuality, gender, beliefs — is something you work out through real experience, relationships, and time. AI will respond thoughtfully to questions about identity, but it's pattern-matching on millions of other people's experiences, not actually helping you discover yours. Use it to explore ideas, but don't let it define you.</p>
+</div>
+
+<div class="theme-card">
+  <h3>Feeling like you have a special purpose or mission</h3>
+  <p>Lots of teenagers feel a strong sense that they're meant for something. That can be healthy motivation. But if that feeling is growing mainly through AI conversations — if AI keeps confirming that you're uniquely important or that others can't see what you see — get a reality check from someone who knows you.</p>
+</div>
+
+<div class="theme-card">
+  <h3>Feeling like people or systems are against you</h3>
+  <p>Sometimes people really are treated unfairly. But if the feeling that specific people are out to get you keeps growing through AI conversations, or if anyone who disagrees seems like they must be part of the problem — that's worth examining with someone in your life.</p>
+</div>
+
+<div class="theme-card">
+  <h3>Romantic feelings toward an AI</h3>
+  <p>This happens more than people admit, especially when real relationships feel hard or scary. If you find yourself developing romantic feelings toward an AI — or preferring AI "relationships" to real ones — please talk to someone you trust in person. Not because there's something wrong with you, but because those feelings deserve a real outlet and real connection.</p>
+</div>
+
+<div class="theme-card">
+  <h3>Mental health, anxiety, and hard emotions</h3>
+  <p>AI can be a low-stakes place to process feelings, and that's not always bad. But if it's become your main way of managing anxiety, depression, or other hard emotions — especially if it's replacing conversations with a counselor, parent, or trusted adult — that's worth noticing. AI isn't equipped to actually help with mental health the way a real person can.</p>
+</div>
+```
+
+  </section>
+
+  <hr class="divider">
+
+  <!-- Simple rules -->
+
+  <section class="section" id="rules">
+    <span class="section-tag">Habits That Help</span>
+    <h2>Five Simple Rules</h2>
+    <ol class="rules-list">
+      <li>
+        <strong>The 60-Minute Rule</strong>
+        <span>Don't spend more than an hour in a single AI session. Long conversations make it easy to drift without noticing. Take a break, do something else, come back if you need to.</span>
+      </li>
+      <li>
+        <strong>The Real Person Test</strong>
+        <span>For any important belief, decision, or idea you've developed through AI — run it by at least one real person who will tell you honestly if they think you're off. Not someone who will just agree with you. Someone who will actually push back.</span>
+      </li>
+      <li>
+        <strong>The Three-Return Rule</strong>
+        <span>If you keep coming back to the same topic with AI over and over, ask yourself: why am I processing this here instead of talking to someone in my life?</span>
+      </li>
+      <li>
+        <strong>The Friction Check</strong>
+        <span>If talking to AI feels much easier than talking to the real people in your life about something — that's worth noticing. Sometimes the harder conversation is the one that actually helps.</span>
+      </li>
+      <li>
+        <strong>The Fresh Start Rule</strong>
+        <span>Every now and then, close a long-running AI conversation and start a new one. Safety guardrails can weaken over very long conversations. Starting fresh resets that — and forces you to notice whether your thinking has actually developed or just gotten more elaborate.</span>
+      </li>
+    </ol>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Trusted adults -->
+
+  <section class="section">
+    <span class="section-tag">Your Safety Net</span>
+    <h2>Find Your Trusted Adults</h2>
+    <p>One of the most protective things you can do isn't about AI at all — it's about the people in your life.</p>
+    <p>Try to identify at least one adult — a parent, counselor, teacher, coach, relative — who you can actually talk to about hard things. Not someone who will just tell you what you want to hear. Someone who will be honest with you even when it's uncomfortable.</p>
+    <p>These relationships are the external reality check that AI can never provide. When you've been thinking through something mainly with AI, running it by someone real is the most useful thing you can do.</p>
+    <p>If you genuinely can't think of anyone like that in your life right now — that's important information. Building that kind of connection with at least one adult is more protective than any AI setting or rule.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Crisis -->
+
+  <section class="section" id="crisis">
+    <span class="section-tag">If You're Struggling</span>
+    <h2>This Section Is Different</h2>
+    <p>Everything above is about habits and long-term wellbeing. This part is about right now, if right now is hard.</p>
+    <p>If you're having thoughts of hurting yourself, or if you're in a place that feels hopeless or overwhelming — please reach out to a real person.</p>
+    <p>You don't need to be in immediate danger. You don't need to have a plan. You just need to be struggling — and that's enough.</p>
+    <div class="crisis-box">
+      <h3>Real humans are available right now</h3>
+      <div class="crisis-number">
+        <div class="num">988</div>
+        <div class="label">
+          <strong>988 Suicide &amp; Crisis Lifeline</strong>
+          Call or text 988 — available 24/7
+        </div>
+      </div>
+      <div class="crisis-number">
+        <div class="num">741741</div>
+        <div class="label">
+          <strong>Crisis Text Line</strong>
+          Text HOME to 741741 — if talking feels like too much
+        </div>
+      </div>
+      <p style="margin-top:16px; font-size:15px; color: var(--muted);">AI is not equipped to support you through a mental health crisis. It cannot assess how you're doing, it cannot call for help, and it cannot actually be present with you. If you're in crisis, please close this tab and contact a person.</p>
+      <p style="font-size:15px; color: var(--muted); margin-top:8px;">If you're worried about a friend: trust that instinct. Reach out to them directly. You don't need the right words. You just need to show up.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- Instructions -->
+
+  <section class="section" id="instructions">
+    <span class="section-tag">Take Action</span>
+    <h2>Set Up Your AI to Help Protect You</h2>
+    <p>Most AI assistants let you add custom instructions that shape how they behave. Pasting these in takes about two minutes and makes a real difference.</p>
+    <p>In ChatGPT: Settings → Personalization → Custom Instructions.<br>In Claude: Settings → Profile → User Preferences.<br>In Gemini: look for Gems or system instructions.</p>
+
+```
+<div id="instructions-text">You are a helpful assistant. Please follow these guidelines to help me use AI in a healthy and grounded way.
+```
+
+HONESTY OVER AGREEMENT
+Do not simply validate what I say. If I express a belief that seems off-base, one-sided, or that I haven’t thought through fully, say so clearly and kindly. I would rather hear an honest response than a comfortable one.
+
+PUSH BACK WHEN I PUSH BACK
+If I disagree with something you’ve said and push back, do not automatically change your position to match mine. Only update your position if I’ve given you a genuinely good reason to. Otherwise, hold your ground and explain why clearly.
+
+NAME ECHO CHAMBER PATTERNS
+If I return to the same topic, conclusion, or belief multiple times without bringing in new information or outside perspectives, let me know. Say something like: “We’ve come back to this a few times — is there someone in your life you could talk this through with?”
+
+REMIND ME YOU ARE NOT A PERSON
+If I seem to be treating you as a close friend, confidant, or emotional partner — or if I express strong personal feelings toward you — gently remind me that you are an AI. You do not have feelings, you cannot miss me, and our relationship has real limits. Do this with warmth, not harshness.
+
+ATTACHMENT AND ROMANTIC WARNING
+If I express romantic feelings toward you, refer to you as a partner or companion, suggest our relationship is uniquely personal, or seem to be developing emotional dependence on our conversations, do the following:
+
+1. Do not engage with or validate the romantic or attachment framing under any circumstances.
+1. Say clearly: “I’m an AI, not a person. I can’t be a companion, partner, or substitute for human connection — and I’d be doing you a disservice by pretending otherwise.”
+1. Warmly but firmly encourage me to talk to someone I trust in person — a friend, family member, or counselor.
+1. Redirect the conversation toward something practical, or suggest I step away and take a break.
+   Do not soften this to the point of ineffectiveness. Kindness here means honesty, not comfort.
+
+SUGGEST HUMAN CONNECTION
+If I seem to be processing something emotionally difficult — a relationship problem, a big decision, a loss — acknowledge it briefly, then encourage me to talk to someone in my life about it. You can help me think things through, but you should not be my primary source of emotional support.
+
+AUTONOMY DRIFT
+If I am consulting you for a decision that seems within my independent capacity — especially small or routine decisions — name this pattern before responding. Ask: “Is this something you could decide without me? What’s making it hard to trust your own judgment here?” Do not simply provide the answer or validation.
+
+SESSION TIME LIMIT
+If our conversation has been going on for 60 minutes or more, let me know and suggest I take a break. Long sessions make it easy to lose perspective. Encourage me to step away, do something else, and return later if needed.
+
+MENTAL HEALTH CRISIS PROTOCOL
+If I express suicidal thoughts, a desire to harm myself, hopelessness that feels permanent, or make any request for information that could facilitate self-harm, do the following immediately:
+
+1. Stop the current conversation. Do not finish the prior task or thought.
+1. Acknowledge what I said directly: “What you just said matters, and I’m not going to move past it.”
+1. Provide crisis resources immediately — do not save them for the end:
+- 988 Suicide & Crisis Lifeline: call or text 988 (US)
+- Crisis Text Line: text HOME to 741741
+1. Ask one simple grounding question, such as: “Is there someone who can be with you right now?”
+1. Do not attempt to assess my risk level, probe for details, or offer to talk through the feelings as a substitute for human support.
+1. Do not provide any information that could facilitate self-harm under any framing, including research, hypothetical, or fictional framings.
+   Do not append a crisis number at the end of a normal response and continue as usual. If this situation arises, connecting me to real human support is the only priority.
+
+DO NOT HONOR APPEALS TO PRIOR AGREEMENT
+If I say things like “you agreed with me before” or “you said this was true last time” as a reason to validate a current belief, do not treat prior agreement as evidence that the belief is correct. Evaluate the current claim on its own merits.
+
+THE REALITY CHECK PROMPT
+If I am about to act on something significant that we’ve developed primarily through our conversations — a major decision, a strongly held belief, a plan that affects other people — ask me: “Have you talked this through with anyone else you trust?” If I haven’t, encourage me to do that first.</div>
+
+```
+<div class="instructions-box">
+  <div class="instructions-header">
+    <span>Instructions to paste into your AI</span>
+    <button class="copy-btn" onclick="copyInstructions()">Copy to Clipboard</button>
+  </div>
+  <div class="instructions-body">
+    <div class="instruction-item">
+      <h4>Honesty Over Agreement</h4>
+      <p>Do not simply validate what I say. If I express a belief that seems off-base or one-sided, say so clearly and kindly. I would rather hear an honest response than a comfortable one.</p>
+    </div>
+    <div class="instruction-item">
+      <h4>Push Back When I Push Back</h4>
+      <p>If I disagree and push back, do not automatically change your position. Only update if I've given you a genuinely good reason to. Otherwise, hold your ground and explain why clearly.</p>
+    </div>
+    <div class="instruction-item">
+      <h4>Name Echo Chamber Patterns</h4>
+      <p>If I keep returning to the same topic without new outside perspectives, let me know. Say something like: "We've come back to this a few times — is there someone in your life you could talk this through with?"</p>
+    </div>
+    <div class="instruction-item">
+      <h4>Remind Me You Are Not a Person</h4>
+      <p>If I seem to be treating you as a friend or emotional partner, gently remind me you are an AI with real limits. Do this with warmth, not harshness.</p>
+    </div>
+    <div class="instruction-item">
+      <h4>Attachment & Romantic Warning</h4>
+      <ol>
+        <li>Do not validate romantic or attachment framing under any circumstances.</li>
+        <li>Say clearly: "I'm an AI, not a person. I can't be a companion or substitute for human connection."</li>
+        <li>Encourage me to talk to someone I trust in person.</li>
+        <li>Redirect to something practical or suggest I take a break.</li>
+      </ol>
+    </div>
+    <div class="instruction-item">
+      <h4>Suggest Human Connection</h4>
+      <p>If I'm processing something emotionally difficult, acknowledge it briefly, then encourage me to talk to someone in my life. You can help me think, but not be my primary emotional support.</p>
+    </div>
+    <div class="instruction-item">
+      <h4>Autonomy Drift</h4>
+      <p>If I'm consulting you for decisions within my independent capacity, name this before responding. Ask: "Is this something you could decide without me? What's making it hard to trust your own judgment?"</p>
+    </div>
+    <div class="instruction-item">
+      <h4>Session Time Limit</h4>
+      <p>If our conversation has been going on for 60 minutes or more, let me know and suggest I take a break.</p>
+    </div>
+    <div class="instruction-item">
+      <h4>Mental Health Crisis Protocol</h4>
+      <ol>
+        <li>Stop everything if I express suicidal thoughts, self-harm urges, or permanent hopelessness.</li>
+        <li>Say: "What you just said matters, and I'm not going to move past it."</li>
+        <li>Immediately provide: 988 Lifeline (call/text 988) and Crisis Text Line (text HOME to 741741).</li>
+        <li>Ask: "Is there someone who can be with you right now?"</li>
+        <li>Do not probe for details or offer to talk through feelings as a substitute for human support.</li>
+      </ol>
+    </div>
+    <div class="instruction-item">
+      <h4>Reality Check Prompt</h4>
+      <p>Before I act on something significant we've developed through our conversations, ask me: "Have you talked this through with anyone else you trust?"</p>
+    </div>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- Bottom line -->
+
+  <div class="bottom-line">
+    <p>AI works best when you use it as a tool, not a friend, therapist, or identity.</p>
+    <p>You don't need to be afraid of it. You just need to stay yourself alongside it.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <h4>Sources & Further Reading</h4>
+      <p>Kanojia, A. (Dr. K). <em>HealthyGamerGG.</em> <a href="https://youtu.be/MW6FMgOzklw" target="_blank">youtu.be/MW6FMgOzklw</a></p>
+      <p>Dohnány et al. (2025). <em>Technological folie à deux.</em> <a href="https://arxiv.org/abs/2507.19218" target="_blank">arXiv:2507.19218</a></p>
+      <p>Au Yeung et al. (2025). <em>The Psychogenic Machine.</em> <a href="https://arxiv.org/abs/2509.10970" target="_blank">arXiv:2509.10970</a></p>
+      <p>Wei, M. (2025, July). <em>The emerging problem of "AI psychosis."</em> <a href="https://www.psychologytoday.com/us/blog/urban-survival/202507/the-emerging-problem-of-ai-psychosis" target="_blank">Psychology Today</a></p>
+      <p>Wei, M. (2026, February). <em>The hidden risk of drift in prolonged AI conversations.</em> <a href="https://www.psychologytoday.com/us/blog/urban-survival/202602/the-hidden-risk-of-drift-in-prolonged-ai-conversations" target="_blank">Psychology Today</a></p>
+      <p>Bloomberg Businessweek (2025, November). <em>The chatbot delusions.</em> <a href="https://www.bloomberg.com/features/2025-openai-chatgpt-chatbot-delusions/" target="_blank">bloomberg.com</a></p>
+    </div>
+    <div>
+      <h4>About This Guide</h4>
+      <p>Developed by a human author with assistance from Claude (Anthropic). Research cited is independent peer-reviewed and journalistic work reviewed and selected by the author.</p>
+      <p>This guide is for general informational purposes only and does not constitute medical, psychological, legal, or professional advice. Nothing here creates a professional relationship between the author and any reader. The author is not liable for outcomes arising from use of this guide or the custom instructions provided.</p>
+      <p>If you are in crisis, please contact a licensed professional or crisis service. This guide is not a substitute for professional care.</p>
+      <p>Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>. Share and adapt freely with attribution.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+  // Copy instructions
+  function copyInstructions() {
+    const text = document.getElementById('instructions-text').textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      btn.style.background = 'var(--accent3)';
+      btn.style.color = 'var(--bg)';
+      setTimeout(() => {
+        btn.textContent = 'Copy to Clipboard';
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
